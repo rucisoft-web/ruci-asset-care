@@ -85,4 +85,16 @@ class PanelPagesTest extends TestCase
 
         $this->actingAs(User::where('email', 'manajer@gpch.demo')->first())->get('/platform/companies')->assertForbidden();
     }
+
+    public function test_user_without_company_is_redirected_instead_of_404(): void
+    {
+        $admin = User::create(['name' => 'Admin', 'email' => 'admin@contoh.id', 'password' => 'RahasiaKuat#1', 'is_platform_admin' => true]);
+        $this->actingAs($admin)->get('/app')->assertRedirect('/platform');
+
+        $this->flushSession();
+        $this->app['auth']->forgetGuards();
+        $user = User::create(['name' => 'Staf', 'email' => 'staf@contoh.id', 'password' => 'RahasiaKuat#1']);
+        $this->actingAs($user)->get('/app')->assertRedirect(route('no-company'));
+        $this->get(route('no-company'))->assertOk()->assertSee('staf@contoh.id');
+    }
 }
