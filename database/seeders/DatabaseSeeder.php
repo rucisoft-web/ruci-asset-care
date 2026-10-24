@@ -20,7 +20,7 @@ class DatabaseSeeder extends Seeder
         }
 
         if (config('asset.demo.enabled')) {
-            $this->call([DemoSeeder::class, GeneralAffairsDemoSeeder::class]);
+            $this->call(DemoSeeder::class);
 
             if ($email) {
                 // Admin platform juga bisa membuka data contoh sebagai manajer.

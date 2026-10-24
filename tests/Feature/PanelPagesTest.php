@@ -10,7 +10,6 @@ use App\Models\User;
 use App\Models\WorkOrder;
 use App\Support\CurrentCompany;
 use Database\Seeders\DemoSeeder;
-use Database\Seeders\GeneralAffairsDemoSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -22,7 +21,7 @@ class PanelPagesTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->seed([DemoSeeder::class, GeneralAffairsDemoSeeder::class]);
+        $this->seed(DemoSeeder::class);
         app(CurrentCompany::class)->set(null);
     }
 
@@ -36,13 +35,9 @@ class PanelPagesTest extends TestCase
             '', '/assets', '/assets/'.$ids(Asset::class), '/inspections', '/maintenance-requests',
             '/maintenance-requests/'.$ids(MaintenanceRequest::class), '/work-orders', '/work-orders/'.$ids(WorkOrder::class),
             '/preventive-plans', '/asset-risks', '/capex-proposals', '/asset-surveys', '/asset-surveys/'.$ids(\App\Models\AssetSurvey::class), '/verifikasi-aset',
-            '/dasbor-bagian-umum', '/jadwal-ruang-rapat', '/jadwal-ruang-rapat?minggu=2020-01-01', '/room-bookings', '/vehicle-bookings', '/vehicles',
-            '/vehicles/'.$ids(\App\Models\Vehicle::class), '/supply-requests', '/supply-requests/'.$ids(\App\Models\SupplyRequest::class),
-            '/supply-items', '/stock-movements', '/legal-documents',
         ];
-        $managerOnly = ['/departments', '/locations', '/asset-categories', '/asset-templates', '/asset-templates/'.$ids(\App\Models\AssetTemplate::class).'/edit', '/audit-logs',
-            '/meeting-rooms', '/vehicles/create', '/vehicles/'.$ids(\App\Models\Vehicle::class).'/edit'];
-        $operate = ['/assets/create', '/assets/'.$ids(Asset::class).'/edit', '/inspections/create', '/work-orders/create', '/supply-requests/create'];
+        $managerOnly = ['/departments', '/locations', '/asset-categories', '/asset-templates', '/asset-templates/'.$ids(\App\Models\AssetTemplate::class).'/edit', '/audit-logs'];
+        $operate = ['/assets/create', '/assets/'.$ids(Asset::class).'/edit', '/inspections/create', '/work-orders/create'];
 
         foreach (['manajer@gpch.demo' => Role::Manajer, 'teknisi@gpch.demo' => Role::Staf, 'gm@gpch.demo' => Role::Eksekutif] as $email => $role) {
             $user = User::where('email', $email)->first();
@@ -74,17 +69,6 @@ class PanelPagesTest extends TestCase
             ->assertSee('Asset Care Index')
             ->assertSee('Lift Penumpang #3')
             ->assertSee('tab=kritis', false);
-    }
-
-    public function test_general_affairs_dashboard_shows_deadlines_and_low_stock(): void
-    {
-        $this->actingAs(User::where('email', 'umum@gpch.demo')->first())
-            ->get('/app/gpch/dasbor-bagian-umum')
-            ->assertOk()
-            ->assertSee('Bagian Umum')
-            ->assertSee('SILO Genset 1000 kVA')
-            ->assertSee('Toner HP 85A')
-            ->assertSee('Pajak tahunan D 1234 GPC');
     }
 
     public function test_non_member_cannot_open_company(): void

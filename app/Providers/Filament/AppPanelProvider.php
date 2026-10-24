@@ -56,9 +56,6 @@ class AppPanelProvider extends PanelProvider
                 NavigationGroup::make('Identifikasi Awal'),
                 NavigationGroup::make('Inspeksi & Pemeliharaan'),
                 NavigationGroup::make('Risiko & Investasi'),
-                NavigationGroup::make('Layanan Umum'),
-                NavigationGroup::make('ATK & Persediaan'),
-                NavigationGroup::make('Legal & Dokumen'),
                 NavigationGroup::make('Konfigurasi')->collapsed(),
             ])
             ->discoverResources(in: app_path('Filament/App/Resources'), for: 'App\Filament\App\Resources')
